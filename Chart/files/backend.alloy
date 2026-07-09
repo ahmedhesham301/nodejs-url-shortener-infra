@@ -1,0 +1,25 @@
+discovery.kubernetes "backend_pods" {
+	role            = "pod"
+	// kubeconfig_file = "/etc/alloy/microk8s-config.yaml"
+
+	namespaces {
+		names = ["default"]
+	}
+	selectors {
+		role = "pod"
+		label = "app=backend"
+		field = "spec.nodeName=" + sys.env("NODE_NAME")
+	}
+}
+
+prometheus.scrape "backend_metrics" {
+	targets = discovery.kubernetes.backend_pods.targets
+	forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.remote_write "prometheus" {
+	endpoint {
+		url = format("http://%s:%s/api/v1/write", "{{ .Values.prometheus.host }}", "{{ .Values.prometheus.port }}")
+	}
+}
+	
