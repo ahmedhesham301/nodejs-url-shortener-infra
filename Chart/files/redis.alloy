@@ -29,3 +29,21 @@
 // 		}
 // 	}
 // }
+
+discovery.kubernetes "redis_ha_proxy_pods" {
+	role            = "pod"
+
+	namespaces {
+		names = ["default"]
+	}
+	selectors {
+		role = "pod"
+		label = "app=redis-ha-haproxy"
+		field = "spec.nodeName=" + sys.env("NODE_NAME")
+	}
+}
+
+prometheus.scrape "redis_ha_proxy_metrics" {
+	targets = discovery.kubernetes.redis_ha_proxy_pods.targets
+	forward_to = [prometheus.remote_write.prometheus.receiver]
+}

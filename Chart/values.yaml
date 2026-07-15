@@ -31,9 +31,15 @@ redis-ha:
   haproxy:
     enabled: true
     replicas: 1
+    metrics:
+      enabled: true
+
 
 env: "dev"
 alloy:
+  controller:
+    podLabels:
+      app: alloy
   alloy:
     stabilityLevel: "experimental"
     configMap:
