@@ -17,9 +17,5 @@ prometheus.scrape "backend_metrics" {
 	forward_to = [prometheus.remote_write.prometheus.receiver]
 }
 
-prometheus.remote_write "prometheus" {
-	endpoint {
-		url = format("http://%s:%s/api/v1/write", "{{ .Values.prometheus.host }}", "{{ .Values.prometheus.port }}")
-	}
-}
+
 	

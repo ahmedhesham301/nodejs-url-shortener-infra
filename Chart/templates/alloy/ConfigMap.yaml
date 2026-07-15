@@ -4,6 +4,7 @@ metadata:
   name: alloy-cf
 data:
   config.alloy: |-
+{{ tpl (.Files.Get "files/config.alloy") . | indent 4 }}
 {{ tpl (.Files.Get "files/backend.alloy") . | indent 4 }}
 {{ tpl (.Files.Get "files/db.alloy") . | indent 4 }}
 {{ tpl (.Files.Get "files/logs.alloy") . | indent 4 }}

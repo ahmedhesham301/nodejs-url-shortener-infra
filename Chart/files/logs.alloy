@@ -1,15 +1,3 @@
-livedebugging {
-  enabled = true
-}
-
-
-
-loki.write "docker_local" {
-    endpoint {
-        url = format("http://%s:%s/loki/api/v1/push", "{{ .Values.loki.host }}", "{{ .Values.loki.port }}")
-    }
-}
-
 discovery.kubernetes "all_pods" {
   role = "pod"
   // kubeconfig_file = "/etc/alloy/microk8s-config.yaml"
@@ -102,5 +90,5 @@ loki.process "pods_logs" {
       }
   }
 
-  forward_to = [loki.write.docker_local.receiver]
+  forward_to = [loki.write.loki.receiver]
 }
