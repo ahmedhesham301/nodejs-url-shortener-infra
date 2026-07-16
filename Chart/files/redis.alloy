@@ -1,34 +1,37 @@
-// TODO: make this work after i use redis chart
-// discovery.kubernetes "cache_pods" {
-// 	role = "pod"
+discovery.kubernetes "cache_pods" {
+	role = "pod"
 
-// 	namespaces {
-// 		names = ["default"]
-// 	}
+	namespaces {
+		names = ["default"]
+	}
 
-// 	selectors {
-// 		role  = "pod"
-// 		label = "app.kubernetes.io/name=cache"
-// 		field = "spec.nodeName=" + sys.env("NODE_NAME")
-// 	}
-// }
+	selectors {
+		role  = "pod"
+		label = "app=redis-ha"
+		field = "spec.nodeName=" + sys.env("NODE_NAME")
+	}
+}
 
-// foreach "cache_pod" {
-// 	collection = discovery.kubernetes.cache_pods.targets
-// 	var        = "each"
 
-// 	template {
-// 		prometheus.exporter.redis "redis" {
-// 			redis_addr     = format("%s:6379", env("REDIS_HOST"))
-// 			redis_password = "1234"
-// 		}
+foreach "cache_pod" {
+	collection = discovery.kubernetes.cache_pods.targets
+	var        = "each"
 
-// 		prometheus.scrape "redis_metrics" {
-// 			targets    = prometheus.exporter.redis.redis.targets
-// 			forward_to = [prometheus.remote_write.prometheus.receiver]
-// 		}
-// 	}
-// }
+	template {
+		prometheus.exporter.redis "redis" {
+			redis_addr     = each["__meta_kubernetes_pod_ip"] + ":6379"
+			redis_password = "{{ .Values.redis.password }}"
+		}
+
+		prometheus.scrape "redis_metrics" {
+			targets    = prometheus.exporter.redis.redis.targets
+			forward_to = [prometheus.remote_write.prometheus.receiver]
+		}
+	}
+}
+
+
+
 
 discovery.kubernetes "redis_ha_proxy_pods" {
 	role            = "pod"
