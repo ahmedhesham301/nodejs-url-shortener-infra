@@ -46,10 +46,4 @@ alloy:
       create: false
       name: alloy-cf
       key: config.alloy
-    extraEnv: 
-      - name: NODE_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: spec.nodeName
-
         

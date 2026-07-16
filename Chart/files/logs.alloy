@@ -7,7 +7,7 @@ discovery.kubernetes "all_pods" {
 
 	selectors {
 		role  = "pod"
-		field = "spec.nodeName=" + sys.env("NODE_NAME")
+		field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
 	}
 }
 

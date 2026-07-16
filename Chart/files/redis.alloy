@@ -8,7 +8,7 @@ discovery.kubernetes "cache_pods" {
 	selectors {
 		role  = "pod"
 		label = "app=redis-ha"
-		field = "spec.nodeName=" + sys.env("NODE_NAME")
+		field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
 	}
 }
 
@@ -50,7 +50,7 @@ discovery.kubernetes "redis_ha_proxy_pods" {
 	selectors {
 		role  = "pod"
 		label = "app=redis-ha-haproxy"
-		field = "spec.nodeName=" + sys.env("NODE_NAME")
+		field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
 	}
 }
 

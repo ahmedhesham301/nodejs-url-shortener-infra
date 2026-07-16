@@ -8,7 +8,7 @@ discovery.kubernetes "backend_pods" {
 	selectors {
 		role  = "pod"
 		label = "app=backend"
-		field = "spec.nodeName=" + sys.env("NODE_NAME")
+		field = "spec.nodeName=" + coalesce(sys.env("HOSTNAME"), constants.hostname)
 	}
 }
 
