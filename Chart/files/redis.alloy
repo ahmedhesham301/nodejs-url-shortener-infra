@@ -12,9 +12,19 @@ discovery.kubernetes "cache_pods" {
 	}
 }
 
+discovery.relabel "cache_pods_relabel" {
+	targets = discovery.kubernetes.cache_pods.targets
+
+	// Label creation - "namespace" field from "__meta_kubernetes_namespace"
+	rule {
+		source_labels = ["__meta_kubernetes_pod_container_port_number"]
+		action        = "keep"
+		regex         = "6379"
+	}
+}
 
 foreach "cache_pod" {
-	collection = discovery.kubernetes.cache_pods.targets
+	collection = discovery.relabel.cache_pods_relabel.output
 	var        = "each"
 
 	template {
@@ -30,23 +40,21 @@ foreach "cache_pod" {
 	}
 }
 
-
-
-
 discovery.kubernetes "redis_ha_proxy_pods" {
-	role            = "pod"
+	role = "pod"
 
 	namespaces {
 		names = ["default"]
 	}
+
 	selectors {
-		role = "pod"
+		role  = "pod"
 		label = "app=redis-ha-haproxy"
 		field = "spec.nodeName=" + sys.env("NODE_NAME")
 	}
 }
 
 prometheus.scrape "redis_ha_proxy_metrics" {
-	targets = discovery.kubernetes.redis_ha_proxy_pods.targets
+	targets    = discovery.kubernetes.redis_ha_proxy_pods.targets
 	forward_to = [prometheus.remote_write.prometheus.receiver]
 }

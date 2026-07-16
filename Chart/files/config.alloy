@@ -1,11 +1,11 @@
 livedebugging {
-  enabled = true
+	enabled = true
 }
 
 loki.write "loki" {
-    endpoint {
-        url = format("http://%s:%s/loki/api/v1/push", "{{ .Values.loki.host }}", "{{ .Values.loki.port }}")
-    }
+	endpoint {
+		url = format("http://%s:%s/loki/api/v1/push", "{{ .Values.loki.host }}", "{{ .Values.loki.port }}")
+	}
 }
 
 prometheus.remote_write "prometheus" {
