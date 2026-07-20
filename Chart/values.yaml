@@ -1,9 +1,9 @@
 scaling:
-  minReplicas: 3
-  maxReplicas: 12
+  minReplicas: 1
+  maxReplicas: 3
 
 db:
-  host: "10.42.0.1"
+  host: "192.168.1.21"
   password: "1234"
   user: "postgres"
   database: "postgres"
@@ -14,11 +14,11 @@ redis:
   password: "1234"
 
 prometheus:
-  host: "10.42.0.1"
+  host: "192.168.1.21"
   port: "9090"
 
 loki:
-  host: "10.42.0.1"
+  host: "192.168.1.21"
   port: "3100"
 
 session:
@@ -33,6 +33,10 @@ redis-ha:
     replicas: 1
     metrics:
       enabled: true
+  redis:
+    config:
+      min-replicas-to-write: 0
+
 
 
 env: "dev"
